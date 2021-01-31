@@ -1,6 +1,7 @@
 library("readxl")
 library("stringr")
 library("car")
+library("dplyr")
 
 ## READ DATA
 mrt_data <- read.csv("mrt-data.csv", sep = ";", dec = ",")
@@ -18,6 +19,7 @@ sample_anova <- aov(TotalGrayVol ~ group, full_data)
 summary(sample_anova)
 
 # ANCOVA
-sample_ancova <- aov(TotalGrayVol ~ group + EstimatedTotalIntraCranialVol, full_data)
+t1_data <- filter(full_data, timepoint == 1)
+sample_ancova <- aov(TotalGrayVol ~ group + EstimatedTotalIntraCranialVol, t1_data)
 # correct summary with type III errors
 Anova(sample_ancova, type="III")
