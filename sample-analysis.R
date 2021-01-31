@@ -1,5 +1,6 @@
 library("readxl")
 library("stringr")
+library("car")
 
 ## READ DATA
 mrt_data <- read.csv("mrt-data.csv", sep = ";", dec = ",")
@@ -10,8 +11,13 @@ mrt_data$Subject_ID <- paste(str_sub(mrt_data$Subject_ID, 5, 5), str_sub(mrt_dat
 group_data <- read_excel("group-data.xlsx")
 
 ## JOIN DATA
-full_data <- merge(mrt_data, group_data, by = c("Subject_ID", "timepoint"))
+full_data <- merge(group_data, mrt_data, by = c("Subject_ID", "timepoint"))
 
-# ANOVA for all variables
-sample_anova <- aov(TotalGrayVol ~ group, data = full_data)
+# ANOVA for one variables
+sample_anova <- aov(TotalGrayVol ~ group, full_data)
 summary(sample_anova)
+
+# ANCOVA
+sample_ancova <- aov(TotalGrayVol ~ group + EstimatedTotalIntraCranialVol, full_data)
+# correct summary with type III errors
+Anova(sample_ancova, type="III")
